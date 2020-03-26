@@ -11,7 +11,8 @@ defmodule Soap.Response.Parser do
   }
   @doc """
   Executing with xml response body.
-  If a list is empty then parse/1 returns full parsed response structure into map.
+
+  If a list is empty then `parse/1` returns full parsed response structure into map.
   """
   @spec parse(String.t(), integer()) :: map()
   def parse(xml_response, :fault) do
@@ -56,8 +57,10 @@ defmodule Soap.Response.Parser do
     cond do
       Enum.all?(elements, &is_map/1) && unique_tags?(elements) ->
         Enum.reduce(elements, &Map.merge/2)
+
       Enum.all?(elements, &is_map/1) ->
         elements |> Enum.map(&Map.to_list/1) |> List.flatten()
+
       true ->
         extract_value_from_list(elements)
     end
@@ -68,7 +71,8 @@ defmodule Soap.Response.Parser do
   defp extract_value_from_list(elements), do: elements
 
   defp unique_tags?(elements) do
-    keys = elements
+    keys =
+      elements
       |> Enum.map(&Map.keys/1)
       |> List.flatten()
 
@@ -91,7 +95,7 @@ defmodule Soap.Response.Parser do
     |> apply_namespace_to_tag("Fault")
   end
 
-  def get_body_tag(xml_response) do
+  defp get_body_tag(xml_response) do
     xml_response
     |> get_envelope_namespace()
     |> List.to_string()
